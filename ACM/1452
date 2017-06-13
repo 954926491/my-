@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <math.h>
+int pop(int x,int n)
+{
+	int b=1;
+	while(n>1)
+	{
+		if(n%2==0)
+		{
+			x=(x*x)%29;
+			n/=2;
+		}
+		else
+		{
+			b=b*x%29;
+			n--;
+		}
+	}
+	return x*b%29;
+} 
+int main()
+{
+	int x,a,b,c;
+	while(~scanf("%d",&x)&&x)
+	{
+		a=pop(2,2*x+1);
+		b=pop(3,(x+1));
+		c=pop(22,(x+1));
+		printf("%d\n",(a-1)*((b-1)*15)*(c-1)*18%29);
+	}
+	return 0;
+}
