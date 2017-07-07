@@ -2,56 +2,244 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
         <style type="text/css">
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            ul{
+                margin: 0;
+            }
+            ul{
+                margin-left: 0;
+            }
+            div{
+                display: block;
+            }
+            body{
+               background:url(img/background.jpg)0px 0px;
+               font-family: 'Lato', sans-serif;
+               background-size:cover;   
+            }
+            .chat{
+                margin-bottom: 25px;
+            }
+            .container{
+                width: 75%;
+                margin-left: auto;
+                margin-right: auto;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
             #show{
-                min-height: 200px;
-                width: 50%;
-                border: solid 1px;
-                margin-bottom: 15px;
+                position: relative;
+                overflow-x: hidden;
+                overflow-y: scroll; 
+                height: 400px;
+                width: 65%;
+                border: solid 2px #3AB2FF;
+                float: left;
+                border-radius: 8px;
+                -moz-border-radius: 8px; 
+                -webkit-border-radius: 8px;
+            }
+            #show span{
+                display: inline-block;
+                position: relative;
+                background: #3AB2FF;
+                padding: 6px 2px;
+                color: #fff;
+                border: 1px solid #3AB2FF;
+                margin-left: 6px;
+                margin-bottom: 2px;
+                border-radius: 4px;
+                -moz-border-radius: 4px; 
+                -webkit-border-radius: 4px;
+            }
+            #show span em{
+                position: absolute;
+                display: block;
+                border: solid 8px;
+                border-color: #1571FA #3AB2FF #1571FA #1571FA;
+                font-size: 0;
+                line-height: 0;
+                top: 10px;
+                left: -16px;
+            }
+            #show p{
+                display: block;
+                color: #fff;
+                margin-bottom: 8px;
+                margin-left: 6px;
+            }
+            .work{
+                width: 70%;
             }
             #message{
-                width: 30%;
+                width: 500px;
                 padding: 5px 0;
             }
             #name{
-                width: 18%;
+                width: 150px;
                 padding: 5px 0;
+            }
+            #user{
+                position: relative;
+                overflow: auto;
+                width: 30%;
+                height: 400px;
+                border: solid 2px #3AB2FF;
+                margin-left: 25px;
+                float: left;
+                border-radius: 8px;
+                -moz-border-radius: 8px; 
+                -webkit-border-radius: 8px;
+            }
+            .header{
+                background: #1571FA;
+                padding: 15px 30px;
+            }
+            .header h1{
+                font-size: 2em;
+                color: #fff
+            }
+            .chat{
+                margin-top: 30px;
+            }
+            .clearfix:before,.clearfix:after{
+                display: table;
+                content: "";
+            }
+            .clearfix:after{
+                clear: both;
+            }
+            #userlist{
+                list-style: none;
+            }
+            #userlist {
+                padding-left: 25px;
+            }
+            #userlist li{
+                padding-top: 10px;
+                color: #fff;
+                line-height: 20px;
+            }
+            #userlist li i{
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                margin-right: 5px;
+                border: 0;
+                background: url(img/user.jpg) 0px 0px;
+            }
+            .work input{
+                border: solid 1px #3AB2FF;
             }
             a{
                 text-decoration: none;
                 padding: 15px 20px;
-                background: #1571FA;
+                background: #3AB2FF;
                 color: #fff;
                 transition: 0.5s all;
                -webkit-transition: 0.5s all;
                -moz-transition: 0.5s all;
                -o-transition: 0.5s all;
                -ms-transition: 0.5s all;
+               border-radius: 4px;
+                -moz-border-radius: 4px; 
+                -webkit-border-radius: 4px;
             }
+            
             a:hover{
                 background:#5FC4FD; 
             }
         </style>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>  
+         
     </head>
     <body>
+    <div class="room">
+    <div class="header">
+        <h1>聊天室</h1>
+    </div>
+    <div class="container">
+      <div class="chat">
         <div id="show"></div>
+        <div id="user">
+            <ul id='userlist'></ul>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="work">
         <input type="text" value="" id="message" placeholder="请输入消息">
         <input type="text" value="" id="name" placeholder="昵称">
         <br/><br><br>
         <a href="javascript:void(0)" onclick="send()">发送</a>
         <a href="javascript:void(0)" onclick="exit()">退出</a>
+      </div>
+      
+    </div>
+    </div>
     </body>
     <script type="text/javascript">
         var ws=new WebSocket("ws://127.0.0.1:3000?t=text");
+        var userlist = [];
+        var scl=45;
         ws.onopen=function(){
             console.log('状态：',ws);
-            $('#show').html("连接状态："+ws.readyState+"<br>");
+            $('#show').html("<p>连接状态："+ws.readyState+"</p>");
             console.log("open");
             ws.open("start");
         };
         ws.onmessage=function(evt){
-            $('#show').append(evt.data+'<br>');
+            var data=JSON.parse(evt.data);
+            if(data.type!='join'){
+               var username=data.name;
+               var msg=data.msg;
+               var insert=0;
+            }
+            if(data.type=='join'){
+                $('#show').append("<p>你是第"+data.number+"位！</p>");
+                for(var i=0;i<data.list.length;i++){
+                    $('#userlist').append("<li id="+ data.list[i] +"><i></i>" + data.list[i] + "</li>");
+                }
+            }
+            if(data.type=='same'){
+                $('#show').append("<p>您的昵称已存在，请重新输入！</p><br>");
+            }
+            
+            if(data.type=='chat'){
+               $('#show').append('<span><em></em>' + username + ': '+ msg + '</span><br>');
+               scl+=20;
+               $('#show').animate({
+                 scrollTop: scl+'px'
+               },500);
+               for(var i=0;i<userlist.length;i++){
+                 if(username==userlist[i]){
+                    insert=1;
+                    break;
+                 }
+               }
+               if(insert!=1){
+                userlist.push(username);
+                $('#userlist').append("<li id="+ username +"><i></i>" + username + "</li>");
+               }
+            }
+            if(data.type=='close'){
+              var target=-1;
+              var users=$('#userlist li');
+              $('#show').append('<p>' + username + '已退出聊天室</p>');
+              for(var i=0;i<userlist.length;i++){
+                 if(userlist[i]==username){
+                    target=i;
+                    break;
+                 }
+              }
+              if(target>=0){
+                userlist.splice(target,1);
+                users[target].remove();
+              }
+            }
         };
         ws.onclose=function(){
             console.log('服务关闭');
@@ -62,9 +250,19 @@
         function send(){
             var name=$('#name').val();
             var message=$('#message').val();
+            if(name==''){
+                alert("您未输入昵称！");
+                return;
+            }
+            if(message==''){
+                alert("发送的消息不能为空");
+                return;
+            }
             //var dataStr='{"name":'+name+',"msg":'+message+"}";
             var dataStr="{name:'" + name + "',msg:'" + message +  "'}";  
             console.log('发生数据');
+            $('#message').val('');
+            $('#name').attr("disabled",true);
             ws.send(dataStr);
         }
         function exit(){
