@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
+		<style type="text/css">
+		    .left {
+		    	width: 200px;
+		    }
+		    #num{
+		    	width: 300px;
+		    	height: 32px;
+		    	margin-right: -5px;
+                border: 1px solid #3AB2FF;
+		    }
+		    #submit{
+		    	overflow: hidden;
+		    	padding: 8px 15px;
+		    	background: #3AB2FF;
+		    	border: none;
+		    	color: #fff;
+		    }
+		    .container{
+		    	padding-top: 50px;
+		    	text-align: center;
+		    	margin-bottom: 50px;
+		    }
+		    caption{
+		    	text-align: center;
+		    }
+		</style>
+	</head>
+	<body>
+	    <div class="container">
+		<input type="text" id="num" value="" placeholder="请输入队伍数">
+		<a href="#" id="submit">确定</a>
+		</div>
+		<table class="table table-striped">
+			<caption>赛程安排</caption>
+			<thead>
+				<tr>
+					<th class="left">日期</th>
+					<th>队伍</th>
+				</tr>
+			</thead>
+			<tbody id="list"></tbody>
+		</table>
+
+	</body>
+	<script type="text/javascript">
+	//每次查完 请刷新一次页面
+	   	  var teamList=new Array();
+	   	  $('#submit').on('click',function(){
+	   	  	  var len=parseInt($('#num').val());
+	   	  	  for(var i=1;i<=len;i++){
+	   	  	  	$('#d'+i).remove();
+	   	  	  	$('#list').append('<tr id="d'+i+'"><th class="left">第'+i+'天</th></tr>');
+	   	  	  }
+              if(len%2==0){
+              	for(var i=0;i<len;i++){
+              		teamList[i]=i+1;
+              	}
+              	var t=1;
+              	for(var i=0;i<len/2;i++){
+              		    $('#d'+t).append('<th class="right">'+teamList[i]+'----'+teamList[len-1-i]+'</th>');
+              			console.log(teamList[i],teamList[len-1-i]);
+              		}
+              	var market=0;
+              	for(var k=2;k<len;k++){
+              		if(k%2==0){
+              			teamList[0]=len;
+              			for(var j=0;j<len/2-1;j++){
+              				if(market<len){
+              					market++;
+              					teamList[market]=1;
+              				}  
+              				if(market>=len){
+              					market=1;
+              				}
+              			}
+              			var num=1;
+              			for(var i=market+1;i<len;i++){
+              				num++;
+              				teamList[i]=num;
+              			}
+              			for(var i=1;i<market;i++){
+              				num++;
+              				teamList[i]=num;
+              			}
+              		} else {
+                        teamList[len-1]=len;
+                        for(var j=0;j<len/2-1;j++){
+                        	if(market<len-1){
+                        		market++;
+                        		teamList[market]=1;
+                        	} else {
+                        		market=0;
+                        	}
+                        }
+                        var num=1;
+                        for(var i=market+1;i<len-1;i++){
+                            num++;
+                            teamList[i]=num;
+                        }
+                        for(var i=0;i<market;i++){
+                        	num++;
+                        	teamList[i]=num;
+                        }
+              		}
+              		t++;
+              		for(var i=0;i<len/2;i++){
+              			$('#d'+t).append('<th class="right">'+teamList[i]+'----'+teamList[len-1-i]+'</th>');
+              			console.log(teamList[i],teamList[len-1-i]);
+              		}
+              	}
+              } else {
+              	len=len+1;
+              	var t=1;
+	   	  	   for(var i=0;i<len;i++){
+              		teamList[i]=i+1;
+              	}
+              	teamList[len-1]=0;
+              	for(var i=0;i<len/2;i++){
+              		    $('#d'+t).append('<th class="right">'+teamList[i]+'----'+teamList[len-1-i]+'</th>');
+              			console.log(teamList[i],teamList[len-1-i]);
+              		}
+              	var market=0;
+              	for(var k=2;k<len;k++){
+              		if(k%2==0){
+              			teamList[0]=0;
+              			for(var j=0;j<len/2-1;j++){
+              				if(market<len){
+              					market++;
+              					teamList[market]=1;
+              				}  
+              				if(market>=len){
+              					market=1;
+              				}
+              			}
+              			var num=1;
+              			for(var i=market+1;i<len;i++){
+              				num++;
+              				teamList[i]=num;
+              			}
+              			for(var i=1;i<market;i++){
+              				num++;
+              				teamList[i]=num;
+              			}
+              		} else {
+                        teamList[len-1]=0;
+                        for(var j=0;j<len/2-1;j++){
+                        	if(market<len-1){
+                        		market++;
+                        		teamList[market]=1;
+                        	} else {
+                        		market=0;
+                        	}
+                        }
+                        var num=1;
+                        for(var i=market+1;i<len-1;i++){
+                            num++;
+                            teamList[i]=num;
+                        }
+                        for(var i=0;i<market;i++){
+                        	num++;
+                        	teamList[i]=num;
+                        }
+              		}
+              		t++;
+              		for(var i=0;i<len/2;i++){
+              			$('#d'+t).append('<th class="right">'+teamList[i]+'----'+teamList[len-1-i]+'</th>');
+              			console.log(teamList[i],teamList[len-1-i]);
+              		}
+              	}
+              }
+              
+               
+	   	  });
+
+	</script>
+</html>
