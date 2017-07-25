@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>2048</title>
+	<style type="text/css">
+	    #pannel table{
+	    	background: #877a66;
+	    	padding: 10px 10px;
+	    	border-color: #fff;
+	    	border-radius: 10px;
+
+	    }
+	    *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+		table td{
+            border: 1px solid #808080;
+            width: 90px;
+            height: 90px;
+            font-size: 25px;
+            font-weight: 400;
+            overflow: hidden;
+            text-align: center;
+            border-radius: 5px;
+            background: #bbada0;
+ 		}
+ 		#pannel table p{
+ 			display: block;
+ 			color: #fff;
+ 			font-weight: 600;
+ 			transition: 0.5s all;
+            -webkit-transition: 0.5s all;
+            -o-transition: 0.5s all;
+            -moz-transition: 0.5s all;
+            -ms-transition: 0.5s all;
+ 		}
+ 		#foot span{
+            margin-bottom: 15px;
+            font-size: 35px;
+            font-weight: 800;
+            color: #fff;
+            margin-left: 10px;
+ 		}
+ 		#foot{
+ 			margin-top: 20px;
+ 			background: #877a66;
+ 			width: 300px;
+ 			border: 1px solid #808080;
+ 			border-radius: 8px;
+ 		}
+ 		#score{
+ 			margin-bottom: 10px;
+ 			font-size: 20px;
+ 			font-weight: 800;
+ 			color: #fff;
+ 			display: block;
+ 			margin-left: 10px;
+ 		}
+	</style>
+	<script type="text/javascript">
+	var num=new Array();
+	var score=0;
+	 window.onload=function(){
+         Init();
+        // var btn=document.getElementById("start");
+            CreateNum();
+            CreateNum();
+	 };
+		function Init(){
+           var html=[];
+           html.push("<table>");
+            for(var i=0;i<4;i++){
+            	html.push("<tr>");
+            	for(var j=0;j<4;j++)
+            		html.push('<td><p id="box_'+i+"_"+j+'"></p></td>');
+            	html.push("</tr>");
+            }
+           html.push("</table>");
+           var pid=document.getElementById('pannel');
+           pid.innerHTML=html.join("");
+           for(var i=0;i<4;i++)
+           for(var i=0;i<4;i++){
+            	num[i]=new Array();
+            	for(var j=0;j<4;j++){
+            		num[i][j]=0;
+            	}
+            }
+		}
+            document.onkeydown=function(event){
+                 switch(event.keyCode){
+            	    case 39:
+                       if(MoveRight()){
+                   	      CreateNum();
+                   	      isOver();
+                       }
+                       break;
+                    case 37:
+                       if(MoveLeft()){
+                    	  CreateNum();
+                    	  isOver();
+                        }
+                       break;
+                    case 38:
+                       if(MoveUp()){
+                    	  CreateNum();
+                    	  isOver();
+                        }
+                       break;
+                    case 40:
+                       if(MoveDown()){
+                       	  CreateNum();
+                       	  isOver();
+                       }
+                      break;
+                }   
+            };
+
+        function isOver(){
+        	var isOK=new canMove();
+        	if(!(isOK.moveR(num)||isOK.moveL(num)||isOK.moveU(num)||isOK.moveD(num))&&nospace(num))
+        		alert("game over!");
+        }
+        function MoveLeft(){
+        	var ismove=new canMove();
+        	if(!ismove.moveL(num))
+        	   return false;
+        	for(var i=0;i<4;i++){
+        		for(var j=1;j<4;j++){
+        			if(num[i][j]!=0){
+        				for(var k=0;k<j;k++){
+        					if(num[i][k]==0&&noThings(i,k,j,num)){
+        						num[i][k]=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					} else if(num[i][k]==num[i][j]&&noThings(i,k,j,num)){
+        						num[i][k]+=num[i][j];
+        						score+=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					}
+        				}
+        			}
+        		}
+        	}
+        	return true;
+        }
+        function MoveUp(){
+        	var ismove=new canMove();
+        	if(!ismove.moveU(num))
+        		return false;
+        	for(var j=0;j<4;j++)
+        		for(i=1;i<4;i++){
+        			if(num[i][j]!=0){
+        				for(var k=0;k<i;k++){
+        					if(num[k][j]==0&&noThings2(j,k,i,num)){
+        						num[k][j]=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					}else if(num[k][j]==num[i][j]&&noThings2(j,k,i,num)){
+        						num[k][j]+=num[i][j];
+        						score+=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					}
+        				}
+        			}
+        		}
+            return true;
+        }
+        function MoveDown(){
+        	var ismove=new canMove();
+        	if(!ismove.moveD(num)){
+        		return false;
+        	}
+        	for(var j=3;j>=0;j--)
+        		for(var i=2;i>=0;i--){
+        			if(num[i][j]!=0){
+        				for(var k=3;k>i;k--){
+        					if(num[k][j]==0&&noThings2(j,i,k,num)){
+        						num[k][j]=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					}else if(num[k][j]==num[i][j]&&noThings2(j,i,k,num)){
+        						num[k][j]+=num[i][j];
+        						score+=num[i][j];
+        						num[i][j]=0;
+        						continue;
+        					}
+        				}
+        			}
+        		}
+        	return true;
+        }
+        function MoveRight(){
+        	var ismove=new canMove();
+        	if(!ismove.moveR(num)){
+        		return false;
+        	}
+        	for(var i=3;i>=0;i--){
+        		for(var j=2;j>=0;j--){
+        			if(num[i][j]!=0){
+        			   for(var k=3;k>j;k--){
+                           if(num[i][j]==num[i][k]&&noThings(i,j,k,num)){
+                              num[i][k]+=num[i][j]
+                              num[i][j]=0;
+                              continue;
+                           } else if(num[i][k]==0&&noThings(i,j,k,num)){
+                           	   num[i][k]=num[i][j];
+                           	   score+=num[i][j];
+                           	   num[i][j]=0;
+                           	   continue;
+                           }
+        			   }
+        			}
+        		}
+        	}
+        	return true;
+        }
+        function canMove(){
+        	this.moveR=function(num){
+               for(var i=0;i<4;i++)
+               	for(var j=0;j<3;j++){
+               		if(num[i][j]!=0)
+               		if(num[i][j+1]==0||num[i][j]==num[i][j+1])
+               			return true;
+               	}
+               	return false;
+            };
+            this.moveL=function(num){
+            	for(var i=0;i<4;i++)
+            		for(var j=1;j<4;j++){
+            			if(num[i][j]!=0){
+            				if(num[i][j-1]==0||num[i][j]==num[i][j-1])
+            					return true;
+            			}
+            		}
+            	return false;
+            };
+            this.moveU=function(num){
+                for(var j=0;j<4;j++)
+                	for(var i=1;i<4;i++){
+                		if(num[i][j]!=0)
+                			if(num[i-1][j]==0||num[i][j]==num[i-1][j])
+                				return true;
+                	}
+            	return false;
+            };
+            this.moveD=function(num){
+            	for(var j=0;j<4;j++)
+            		for(var i=0;i<3;i++){
+            			if(num[i][j]!=0)
+            				if(num[i+1][j]==0||num[i][j]==num[i+1][j])
+            					return true;
+            		}
+            	return false;
+            };
+        }
+        function noThings(row,coll1,coll2,num){
+           for(var i=coll1+1;i<coll2;i++)
+           	if(num[row][i]!=0)
+           		return false;
+           	return true;
+        }
+        function noThings2(row,coll1,coll2,num){
+        	for(var i=coll1+1;i<coll2;i++)
+        		if(num[i][row]!=0)
+        			return false;
+        		return true;
+        }
+        function nospace(num){
+        	for(var i=0;i<4;i++){
+        		for(var j=0;j<4;j++){
+                    if(num[i][j]==0)
+                    	return false;
+        		}
+        	}
+        	return true;
+        }
+        function CreateNum(){
+            if(nospace(num))
+            	return false;
+            while(true){
+            	var X=parseInt(Math.floor(Math.random()*4));
+            	var Y=parseInt(Math.floor(Math.random()*4));
+            	if(num[X][Y]==0){
+            		break;
+            	}
+            }
+            var number=Math.random()<0.5?2:4;
+            num[X][Y]=number;
+            shownumber(X,Y,number);
+        }
+        function shownumber(x,y,number){            
+            	var tab2;
+            	var text2;
+            	tab2=document.getElementById('box_'+x+"_"+y);
+            	text2=document.createTextNode("");
+            	tab2.appendChild(text2);
+            	tab2.firstChild.nodeValue=number;
+            	for(var i=0;i<4;i++){
+            		for(var j=0;j<4;j++){
+            			if(num[i][j]!=0){
+                           tab2=document.getElementById('box_'+i+"_"+j);
+                           text2=document.createTextNode("");
+            	tab2.appendChild(text2);
+                           tab2.firstChild.nodeValue=num[i][j];
+                       } else {
+                       	tab2=document.getElementById('box_'+i+"_"+j);
+                       	text2=document.createTextNode("");
+            	tab2.appendChild(text2);
+                       	tab2.firstChild.nodeValue="";
+                       }
+            		}
+            	}
+            	var sum=document.getElementById("score");
+            	var txt=document.createTextNode("");
+            	sum.appendChild(txt);
+            	sum.firstChild.nodeValue=score;
+        }
+	</script>
+</head>
+<body>
+   <div id="pannel">
+   </div>
+   <div id="foot">
+   <span>score:  </span>
+   <p id="score">0</p>
+   </div>
+</body>
+</html>

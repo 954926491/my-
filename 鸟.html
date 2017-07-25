@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+	<title>鸟</title>
+	<style type="text/css">
+        *{
+        	margin: 0;
+        	padding: 0;
+        }
+        #panel{
+        	margin-left: 100px;
+        	border: 0;
+        }
+	</style>
+</head>
+<body>
+    <div id="frame">
+        <canvas id="panel" width="432px" height="644px" > </canvas>
+    </div>
+   <script type="text/javascript">
+        window.onload=function(){
+        	var panel=document.getElementById("panel");
+        	var context=panel.getContext("2d");
+        	var index=0;
+        	
+        	var birdX=100;
+        	var birdY=300;
+        	
+        	var columnX=432-78;
+        	var columnY=parseInt(Math.random()*(630-360+1)+360,10);
+        	
+        	var groundX=0;
+
+        	var flag=0;
+
+        	var vo=20;
+        	var t=0.5;
+        	var g=4;
+        	var vt=0;
+        	var s;
+        	var al=0;
+
+        	var images=new Array();
+        	for(var i=0;i<=7;i++){
+        		var img=new Image();
+        		img.src='C:/Users/Administrator/Desktop/图片/'+i+'.png';
+        		images.push(img);
+        	}
+        	
+        	var bImg=new Image();
+        	bImg.src='C:/Users/Administrator/Desktop/图片/bg.png';
+        	
+        	var columnImg=new Image();
+        	columnImg.src='C:/Users/Administrator/Desktop/图片/column.png';
+            
+            var groundImg=new Image();
+            groundImg.src='C:/Users/Administrator/Desktop/图片/ground.png'; 
+
+            var startImg=new Image();
+            startImg.src='C:/Users/Administrator/Desktop/图片/start.png';
+
+            var gameoverImg=new Image();
+            gameoverImg.src='C:/Users/Administrator/Desktop/图片/gameover.png';
+
+            document.onkeydown=function(event){
+               var e = event || window.event || arguments.callee.caller.arguments[0];
+               if(e && e.keyCode==38){  
+                    switch(flag){
+                        case 0: 
+                           flag=1;
+                           break;
+                        case 1: 
+                           vo=20;
+                           break;
+                        case 2: 
+                           flag=0;
+                           break;
+                    }   
+
+                 }
+              
+            }; 
+
+            function Start(){
+            	
+                logic();
+                draw();
+                setTimeout(Start,40);
+            }
+            Start();
+            
+            function logic(){
+            	switch(flag){
+            		case 0: 
+            		   vo=20;
+			           vt=0;
+			           s=0;
+			           al=0;
+			           birdY = 300;
+			           columnX=432;
+			           score=0;
+			           columnY=parseInt(Math.random()*(630-360+1)+360,10);
+            		   index++;
+            	       groundX--;
+            	       if (index>7) {
+                           index=0;
+            	        }
+            	       if (groundX<-109){
+            		       groundX=0;
+            	        }
+            		   break;
+            		case 1: 
+
+                        vt=vo;
+                        s=g*t*t/2+vt*t;
+			            birdY=birdY-parseInt(s);
+			            al=Math.atan(s/8);
+			            vo=vt-g*t;
+
+            		   index++;
+            	       groundX--;
+            	       columnX--;            	
+            	       if (index>7) {
+                          index=0;
+            	        }
+            	       if (groundX<-109){
+            		      groundX=0;
+            	        }
+            	       if (columnX<-78) {
+            		      columnX=432;
+                          columnY=parseInt(Math.random()*(630-360+1)+360,10);
+            	        }
+            	        if(birdY+48>=498||birdY<=0){
+            	        	flag=2;
+            	        }
+            	        if(columnX<=156&&columnX>=22){
+                            if(!(birdY>=-columnY+530)||(birdY >=-columnY+ 650)){
+                            	flag=2;
+                            }
+            	        }
+            		   break;
+            		case 2:
+            		   break;
+            	}
+            	// index++;
+            	// groundX--;
+            	// columnX--;            	
+            	// if (index>7) {
+             //        index=0;
+            	// }
+            	// if (groundX<-109){
+            	// 	groundX=0;
+            	// }
+            	// if (columnX<-78) {
+            	// 	columnX=432;
+             //        columnY=parseInt(Math.random()*(630-360+1)+360,10);
+            	// }
+            }
+
+            function draw(){
+
+            	context.drawImage(bImg,0,0);
+            	context.drawImage(columnImg,columnX,-columnY);
+            	context.drawImage(groundImg,groundX,498);
+               
+                if(flag==0){
+                   context.drawImage(startImg,0,0);
+                }
+                if (flag==2) {
+                   context.drawImage(gameoverImg,0,0);
+                }
+                // context.rotate(-al);
+                context.drawImage(images[index],birdX,birdY);
+                // context.rotate(al);
+            };
+           
+            
+
+        }
+   </script>
+</body>
+</html>
